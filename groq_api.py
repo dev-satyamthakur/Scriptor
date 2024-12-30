@@ -17,11 +17,15 @@ def generate_article(prompt):
         chat_completion = client.chat.completions.create(
             messages=[
                 {
+                    "role": "system",
+                    "content": "You are a content writer.'"
+                },
+                {
                     "role": "user",
                     "content": prompt,
-                }
+                },
             ],
-            model="llama3-8b-8192"  # Replace with the desired model
+            model="llama-3.3-70b-versatile"  # Replace with the desired model
         )
 
         # Extract and return the generated content
@@ -40,11 +44,15 @@ def generate_html(prompt):
         chat_completion = client.chat.completions.create(
             messages=[
                 {
+                    "role": "system",
+                    "content": "You are a web developer with strong content writing and communication skills.'"
+                },
+                {
                     "role": "user",
                     "content": prompt,
-                }
+                },
             ],
-            model="llama3-8b-8192"  # Replace with the desired model
+            model="llama-3.3-70b-versatile"   # Replace with the desired model
         )
 
         # Extract and return the generated content

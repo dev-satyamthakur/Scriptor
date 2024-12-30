@@ -19,7 +19,7 @@ def generate_article_endpoint():
         if not topic:
             return jsonify({"error": "Topic is required"}), 400
 
-        # Prompt for generating the article                                                                                     
+        # Prompt for generating the article
         prompt = f"Generate a detailed, plagiarism-free article on the topic: '{topic}'. Ensure it is easy to understand for high school-level readers. Include proper credits where necessary."
 
         # Generate article using Groq API
@@ -53,12 +53,23 @@ def generate_article_html_endpoint():
 
         # Prompt for generating HTML
         prompt = f"""
-!!!CRITICAL: OUTPUT REQUIREMENTS!!!
-1. Output must be pure HTML without any escape characters (\n, \t, etc.)
-2. All HTML should be on a single line
-3. No newlines or special formatting
-4. JSON response should contain raw HTML without any escape sequences
-5. use images as well in the article that is provided in the input as Image URLs
+        !!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
+
+Objective: Generate a simplified, plagiarism-free article in HTML format, based on the input article. Ensure it is easy to understand for high school-level readers and includes proper credits and references. Maintain a professional structure with appropriate HTML tags and IDs. Follow the provided inputs for structuring.
+
+Prompt:
+Read this article and generate plagiarism-free, simplified content while retaining the original context and meaning. The audience is high school-level readers, so make it easy to understand. Follow these formatting guidelines:
+
+Article Title: Provide a title for the article that captures its essence.
+Content Simplification: Rewrite the content in simpler language while ensuring accuracy.
+HTML Structure: Output the article in pure HTML format, including:
+
+
+Sectioned content based on the given number of sections ({number_of_sections}).
+The number of words for each section as specified ({words_per_section}).
+Use appropriate HTML tags (<section>, <p>, <h2>, etc.) and provide unique IDs for each section (e.g., section-1, section-2).
+Images: Add {len(image_urls)} images in the article. Use the provided URLs for the <img> tags and ensure the credits for each image are mentioned in the alt attribute (e.g., alt="Image credit: [source]").
+Output Requirements: Only provide the HTML code that would go inside the <body> tag. Use clear and semantic HTML.
 
 Input Parameters:
 - Number of sections: {number_of_sections}
@@ -69,17 +80,19 @@ Input Parameters:
 Input Article:
 {main_article}
 
-EXPECTED OUTPUT FORMAT:
-{{
-  "html_output": "<!DOCTYPE html><html><head><title>...</title></head><body>...</body></html>",
-  "message": "HTML generated"
-}}
+Image URLs with Credits:
+{', '.join(image_urls)}
+
+Expected Output:
+Strict Syntactical HTML document as per the input parameters. Ensure the article is plagiarism-free, simplified, and uses the specified images and section structure.
+
+!!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
 """
 
         # Generate HTML using Groq API
         html_output = generate_html(prompt)
 
-        return jsonify(html_output), 200
+        return jsonify({"message": "HTML generated", "html_output": html_output}), 200
 
     except Exception as e:
         # Handle any unexpected errors
