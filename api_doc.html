@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .endpoint {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .request, .response {
+            background: #e9ecef;
+            border-left: 5px solid #007bff;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .example {
+            background: #e2f0d9;
+            border-left: 5px solid #28a745;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>API Documentation</h1>
+
+<div class="endpoint">
+    <h2>1. Generate Article</h2>
+    <p><strong>Endpoint:</strong> <code>/generate-article</code></p>
+    <p><strong>Method:</strong> <code>POST</code></p>
+    <p><strong>Description:</strong> Handles requests for article generation based on a provided topic.</p>
+
+    <h3>Request</h3>
+    <div class="request">
+        <p><strong>Content-Type:</strong> <code>application/json</code></p>
+        <p><strong>Body:</strong></p>
+        <ul>
+            <li><code>topic</code>: <em>string</em> - The topic for which the article is to be generated</li>
+        </ul>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response">
+        <p><strong>Status Code:</strong> <code>200 OK</code></p>
+        <code>{
+    "message": "Article generated",
+    "article": "string"  // The generated article content
+}</code>
+    </div>
+    <div class="response">
+        <p><strong>Status Code:</strong> <code>400 Bad Request</code></p>
+        <code>{
+    "error": "Topic is required"
+}</code>
+    </div>
+
+    <h3>Example Request</h3>
+    <div class="example">
+        <code>curl -X POST http://<your-server-address>:<port>/generate-article \
+-H "Content-Type: application/json" \
+-d '{"topic": "Artificial Intelligence"}'</code>
+    </div>
+
+    <h3>Example Response</h3>
+    <div class="example">
+        <code>{
+    "message": "Article generated",
+    "article": "Artificial Intelligence (AI) is a field of computer science that aims to create machines that can perform tasks that typically require human intelligence..."
+}</code>
+    </div>
+</div>
+
+<div class="endpoint">
+    <h2>2. Generate Article HTML</h2>
+    <p><strong>Endpoint:</strong> <code>/generate-article-html</code></p>
+    <p><strong>Method:</strong> <code>POST</code></p>
+    <p><strong>Description:</strong> Handles requests for generating HTML from the article.</p>
+
+    <h3>Request</h3>
+    <div class="request">
+        <p><strong>Content-Type:</strong> <code>application/json</code></p>
+        <p><strong>Body:</strong></p>
+        <ul>
+            <li><code>main_article</code>: <em>string</em> - The main article content</li>
+            <li><code>number_of_sections</code>: <em>integer</em> - The number of sections to divide the article into</li>
+            <li><code>words_per_section</code>: <em>integer</em> - The number of words per section</li>
+            <li><code>image_urls</code>: <em>array of strings</em> - An array of image URLs to include in the HTML</li>
+        </ul>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response">
+        <p><strong>Status Code:</strong> <code>200 OK</code></p>
+        <code>{
+    "message": "HTML generated",
+    "html_output": "string"  // The generated HTML content
+}</code>
+    </div>
+    <div class="response">
+        <p><strong>Status Code:</strong> <code>400 Bad Request</code></p>
+        <code>{
+    "error": "Missing required input parameters"
+}</code>
+    </div>
+
+    <h3>Example Request</h3>
+    <div class="example">
+        <code>curl -X POST http://<your-server-address>:<port>/generate-article-html \
+-H "Content-Type: application/json" \
+-d '{
+    "main_article": "Artificial Intelligence is transforming the world...",
+    "number_of_sections": 3,
+    "words_per_section": 100,
+    "image_urls": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
+}'</code>
+    </div>
+
+    <h3>Example Response</h3>
+    <div class="example">
+        <code>{
+    "message": "HTML generated",
+    "html_output": "<section id='section-1'><h2>Introduction</h2><p>Artificial Intelligence is transforming the world...</p></section><section id='section-2'><h2>Applications</h2><p>AI is used in various fields...</p></section><img src='http://example.com/image1.jpg' alt='Image credit: source1'><img src='http://example.com/image2.jpg' alt='Image credit: source2'>"
+}</code>
+    </div>
+</div>
+
+</body>
+</html>
