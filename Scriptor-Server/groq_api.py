@@ -45,7 +45,7 @@ def generate_html(prompt):
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a web developer with strong content writing and communication skills.'"
+                    "content": "You are a web developer that is developing a blog app in react typescript with shadcn and tailwind-css with strong content writing and communication skills.'"
                 },
                 {
                     "role": "user",

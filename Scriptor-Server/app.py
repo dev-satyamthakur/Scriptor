@@ -53,38 +53,29 @@ def generate_article_html_endpoint():
 
         # Prompt for generating HTML
         prompt = f"""
-        !!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
+!!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
 
-Objective: Generate a simplified, plagiarism-free article in HTML format, based on the input article. Ensure it is easy to understand for high school-level readers and includes proper credits and references. Maintain a professional structure with appropriate HTML tags and IDs. Follow the provided inputs for structuring.
+Objective: Generate a plagiarism-free article in HTML format with Tailwind CSS styling, based on the input article. Make it easy for high school readers to understand.
 
-Prompt:
-Read this article and generate plagiarism-free, simplified content while retaining the original context and meaning. The audience is high school-level readers, so make it easy to understand. Follow these formatting guidelines:
-
-Article Title: Provide a title for the article that captures its essence.
-Content Simplification: Rewrite the content in simpler language while ensuring accuracy.
-HTML Structure: Output the article in pure HTML format, including:
-
-
-Sectioned content based on the given number of sections ({number_of_sections}).
-The number of words for each section as specified ({words_per_section}).
-Use appropriate HTML tags (<section>, <p>, <h2>, etc.) and provide unique IDs for each section (e.g., section-1, section-2).
-Images: Add {len(image_urls)} images in the article. Use the provided URLs for the <img> tags and ensure the credits for each image are mentioned in the alt attribute (e.g., alt="Image credit: [source]").
-Output Requirements: Only provide the HTML code that would go inside the <body> tag. Use clear and semantic HTML.
-
-Input Parameters:
-- Number of sections: {number_of_sections}
+Requirements:
+- Article sections: {number_of_sections} !!STRICT REQUIREMENT!!
 - Words per section: {words_per_section}
 - Images: {len(image_urls)}
 - Image URLs: {', '.join(image_urls)}
+- Write a conclusion section at the very end of the article.
+
+Styling Requirements:
+- Section headings: text-xl font-bold my-2
+- Images: my-2 class
+- Images: Centered around parent container with max-width: 100%
+- Text: Regular body text with normal legible styling
+- Main container: container mx-auto px-4 max-w-3xl
 
 Input Article:
 {main_article}
 
 Image URLs with Credits:
 {', '.join(image_urls)}
-
-Expected Output:
-Strict Syntactical HTML document as per the input parameters. Ensure the article is plagiarism-free, simplified, and uses the specified images and section structure.
 
 !!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
 """
