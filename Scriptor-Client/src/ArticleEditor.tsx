@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
-import { Trash } from "lucide-react";
+import { Trash, LoaderCircle } from "lucide-react";
 
 // Define types for the state
 interface Article {
@@ -45,8 +45,13 @@ const ArticleEditor: React.FC = () => {
     }));
   };
 
+  const [generateArticleLoading, setGenerateArticleLoading] = useState(false);
+  const [generateArticleHTMLLoading, setGenerateArticleHTMLLoading] =
+    useState(false);
+
   const generateHTML = async () => {
     try {
+      setGenerateArticleHTMLLoading(true);
       const response = await axios.post(
         "http://localhost:5000/generate-article-html",
         {
@@ -57,6 +62,7 @@ const ArticleEditor: React.FC = () => {
         }
       );
       setArticleHTML(response.data);
+      setGenerateArticleHTMLLoading(false);
     } catch (e) {
       console.error("Error generating HTML:", e);
     }
@@ -64,6 +70,7 @@ const ArticleEditor: React.FC = () => {
 
   const generateArticle = async () => {
     try {
+      setGenerateArticleLoading(true);
       const response = await axios.post(
         "http://localhost:5000/generate-article",
         {
@@ -74,6 +81,7 @@ const ArticleEditor: React.FC = () => {
         ...prev,
         content: response.data.article,
       }));
+      setGenerateArticleLoading(false);
     } catch (error) {
       console.error("Error generating article:", error);
     }
@@ -111,8 +119,12 @@ const ArticleEditor: React.FC = () => {
               <Label htmlFor="description" className="text-xl">
                 Article
               </Label>
-              <div>{article.content}</div>
+              {!generateArticleLoading && <div>{article.content}</div>}
             </div>
+
+            {generateArticleLoading && (
+              <LoaderCircle size={48} className="animate-spin mx-auto" />
+            )}
 
             <Button type="submit" className="w-full">
               Generate Article
@@ -227,11 +239,17 @@ const ArticleEditor: React.FC = () => {
             Generate HTML
           </Button>
           <hr className="my-4" />
-          <div
-            dangerouslySetInnerHTML={{
-              __html: articlHTML.html_output!,
-            }}
-          />
+          {generateArticleHTMLLoading && (
+            <LoaderCircle size={48} className="animate-spin mx-auto" />
+          )}
+          {!generateArticleHTMLLoading && articlHTML.html_output && (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: articlHTML.html_output!,
+              }}
+              className="animate-in transition-all"
+            />
+          )}
         </CardContent>
       </Card>
     </div>
