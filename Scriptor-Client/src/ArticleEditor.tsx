@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
+import { Trash } from "lucide-react";
 
 // Define types for the state
 interface Article {
@@ -155,16 +156,40 @@ const ArticleEditor: React.FC = () => {
               />
             </div>
 
-            <div className="space-y-2 my-2">
-              <Label htmlFor="image_urls">Image URLs</Label>
+            <div className="space-y-4 my-2">
+              <Label htmlFor="image_urls">Images</Label>
 
-              {articlHTMLInputs.image_urls.map((image, index) => (
-                <div key={index} className="flex space-x-2">
-                  <div>{image}</div>
-                </div>
-              ))}
+              <div className="flex flex-wrap space-x-2">
+                {articlHTMLInputs.image_urls.map((image, index) => (
+                  <div key={index} className="mb-4">
+                    <div className="w-36 flex flex-col items-center">
+                      <img
+                        src={image}
+                        className="w-full h-24 object-cover rounded-lg"
+                        alt={`Image ${index + 1}`}
+                      />
+                      <button
+                        className="mt-1 bg-red-500 space-x-2 text-white rounded-lg w-full h-8 p-1 flex items-center justify-center"
+                        onClick={() => {
+                          const updatedImages =
+                            articlHTMLInputs.image_urls.filter(
+                              (_, i) => i !== index
+                            );
+                          setArticleHTMLInputs((prev) => ({
+                            ...prev,
+                            image_urls: updatedImages,
+                          }));
+                        }}
+                      >
+                        <Trash size={16} />
+                        <div className="font-normal text-sm">Remove</div>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 my-2">
                 <Input
                   id="image_urls"
                   name="image_urls"
@@ -175,7 +200,7 @@ const ArticleEditor: React.FC = () => {
                       curr_image: e.target.value,
                     }));
                   }}
-                  placeholder="Image URLs"
+                  placeholder="Image URL"
                   required
                 />
                 <Button
@@ -188,6 +213,7 @@ const ArticleEditor: React.FC = () => {
 
                     setArticleHTMLInputs((prev) => ({
                       ...prev,
+                      curr_image: "",
                       image_urls: images,
                     }));
                   }}
