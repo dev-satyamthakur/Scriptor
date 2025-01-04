@@ -66,7 +66,7 @@ Requirements:
 
 Styling Requirements:
 - Section headings: text-xl font-bold my-2
-- Images: my-2 class
+- Images: my-2 class rounded-xl
 - Images: Centered around parent container with max-width: 100%
 - Text: Regular body text with normal legible styling
 - Main container: container mx-auto px-4 max-w-3xl

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { Trash, LoaderCircle } from "lucide-react";
+import { Textarea } from "./components/ui/textarea";
 
 // Define types for the state
 interface Article {
@@ -115,26 +116,36 @@ const ArticleEditor: React.FC = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description" className="text-xl">
-                Article
-              </Label>
-              {!generateArticleLoading && <div>{article.content}</div>}
-            </div>
+            <Button type="submit" className="w-full">
+              Generate Article
+            </Button>
 
             {generateArticleLoading && (
               <LoaderCircle size={48} className="animate-spin mx-auto" />
             )}
 
-            <Button type="submit" className="w-full">
-              Generate Article
-            </Button>
+            <hr className="my-4" />
           </form>
 
-          <hr className="my-4" />
-
-          <div>
+          <div className="my-2">
             <div className="space-y-2">
+              <Label htmlFor="description" className="text-xl">
+                Article
+              </Label>
+              <Textarea
+                value={article.content}
+                onChange={(e) =>
+                  setArticle((prev) => ({
+                    ...prev,
+                    content: e.target.value,
+                  }))
+                }
+                className="h-48 text-start resize-none"
+              />
+              {/* {!generateArticleLoading && <div>{article.content}</div>} */}
+            </div>
+
+            <div className="space-y-2 my-2">
               <Label htmlFor="number_of_sections">Number of Sections</Label>
               <Input
                 id="number_of_sections"
