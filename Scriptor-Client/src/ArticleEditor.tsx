@@ -16,8 +16,9 @@ interface Article {
 interface ArticleHTMLInputs {
   number_of_sections: number;
   words_per_section: number[];
-  image_urls: string[];
+  image_urls: { image: string; credit: string }[];
   curr_image: string;
+  curr_credit: string;
   main_article: string;
 }
 
@@ -32,6 +33,7 @@ const ArticleEditor: React.FC = () => {
     words_per_section: [],
     image_urls: [],
     curr_image: "",
+    curr_credit: "",
     main_article: "",
   });
 
@@ -179,70 +181,89 @@ const ArticleEditor: React.FC = () => {
               />
             </div>
 
-            <div className="space-y-4 my-2">
+            <div className="my-2 space-y-2">
               <Label htmlFor="image_urls">Images</Label>
 
-              <div className="flex flex-wrap space-x-2">
-                {articlHTMLInputs.image_urls.map((image, index) => (
-                  <div key={index} className="mb-4">
-                    <div className="w-36 flex flex-col items-center">
-                      <img
-                        src={image}
-                        className="w-full h-24 object-cover rounded-lg"
-                        alt={`Image ${index + 1}`}
-                      />
-                      <button
-                        className="mt-1 bg-red-500 space-x-2 text-white rounded-lg w-full h-8 p-1 flex items-center justify-center"
-                        onClick={() => {
-                          const updatedImages =
-                            articlHTMLInputs.image_urls.filter(
-                              (_, i) => i !== index
-                            );
-                          setArticleHTMLInputs((prev) => ({
-                            ...prev,
-                            image_urls: updatedImages,
-                          }));
-                        }}
-                      >
-                        <Trash size={16} />
-                        <div className="font-normal text-sm">Remove</div>
-                      </button>
+              {/* Loading given images from url */}
+              <div className="grid grid-cols-3 gap-2">
+                {articlHTMLInputs.image_urls.map((item, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <img
+                      src={item.image}
+                      className="h-36 object-cover rounded-lg w-full"
+                      alt={`Image ${index + 1}`}
+                    />
+                    <div className="text-sm text-gray-500 mt-1 mb-2">
+                      {item.credit}
                     </div>
+                    <button
+                      className="bg-red-500 text-white rounded-lg w-full h-8 p-1 flex items-center justify-center"
+                      onClick={() => {
+                        const updatedImages =
+                          articlHTMLInputs.image_urls.filter(
+                            (_, i) => i !== index
+                          );
+                        setArticleHTMLInputs((prev) => ({
+                          ...prev,
+                          image_urls: updatedImages,
+                        }));
+                      }}
+                    >
+                      <Trash size={16} />
+                      <div className="font-normal text-sm">Remove</div>
+                    </button>
                   </div>
                 ))}
               </div>
+              <div className="my-2 space-y-2">
+                <Label>Add New Image</Label>
+                <div className="flex space-x-2">
+                  <Input
+                    id="image_urls"
+                    name="image_urls"
+                    value={articlHTMLInputs.curr_image}
+                    onChange={(e) => {
+                      setArticleHTMLInputs((prev) => ({
+                        ...prev,
+                        curr_image: e.target.value,
+                      }));
+                    }}
+                    placeholder="Image URL"
+                    required
+                  />
+                  <Input
+                    id="image_credit"
+                    name="image_credit"
+                    value={articlHTMLInputs.curr_credit} // Assuming you add a new state for credit
+                    onChange={(e) => {
+                      setArticleHTMLInputs((prev) => ({
+                        ...prev,
+                        curr_credit: e.target.value,
+                      }));
+                    }}
+                    placeholder="Image Credit"
+                    required
+                  />
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const newImage = {
+                        image: articlHTMLInputs.curr_image,
+                        credit: articlHTMLInputs.curr_credit,
+                      };
+                      const images = [...articlHTMLInputs.image_urls, newImage];
 
-              <div className="flex space-x-2 my-2">
-                <Input
-                  id="image_urls"
-                  name="image_urls"
-                  value={articlHTMLInputs.curr_image}
-                  onChange={(e) => {
-                    setArticleHTMLInputs((prev) => ({
-                      ...prev,
-                      curr_image: e.target.value,
-                    }));
-                  }}
-                  placeholder="Image URL"
-                  required
-                />
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const images = [...articlHTMLInputs.image_urls];
-                    images.push(articlHTMLInputs.curr_image);
-
-                    console.log("Images:", images);
-
-                    setArticleHTMLInputs((prev) => ({
-                      ...prev,
-                      curr_image: "",
-                      image_urls: images,
-                    }));
-                  }}
-                >
-                  Add Image
-                </Button>
+                      setArticleHTMLInputs((prev) => ({
+                        ...prev,
+                        curr_image: "",
+                        curr_credit: "", // Reset credit input
+                        image_urls: images,
+                      }));
+                    }}
+                  >
+                    Add Image
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

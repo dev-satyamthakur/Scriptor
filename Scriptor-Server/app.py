@@ -51,6 +51,9 @@ def generate_article_html_endpoint():
         if not main_article or not number_of_sections or not words_per_section or not image_urls:
             return jsonify({"error": "Missing required input parameters"}), 400
 
+        # Prepare image URLs and credits for the prompt
+        image_urls_with_credits = [f"{item['image']} (Credit: {item['credit']})" for item in image_urls]
+
         # Prompt for generating HTML
         prompt = f"""
 !!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
@@ -61,21 +64,20 @@ Requirements:
 - Article sections: {number_of_sections} !!STRICT REQUIREMENT!!
 - Words per section: {words_per_section}
 - Images: {len(image_urls)}
-- Image URLs: {', '.join(image_urls)}
+- Image URLs: {', '.join(item['image'] for item in image_urls)}
+Image URLs with Credits: {', '.join(image_urls_with_credits)}
 - Write a conclusion section at the very end of the article.
 
 Styling Requirements:
 - Section headings: text-xl font-bold my-2
 - Images: my-2 class rounded-xl
 - Images: Centered around parent container with max-width: 100%
+- Images: After every image attach their credit too in light gray center, text-sm text-gray-300 mt-1 mb-2
 - Text: Regular body text with normal legible styling
 - Main container: container mx-auto px-4 max-w-3xl
 
 Input Article:
 {main_article}
-
-Image URLs with Credits:
-{', '.join(image_urls)}
 
 !!!CRITICAL: OUTPUT MUST BE PURE HTML CODE THAT IS INSIDE <body> tag ONLY AND DO NOT GIVE <body> tag. NO INTRODUCTORY TEXT, NO COMMENTARY!!!
 """
