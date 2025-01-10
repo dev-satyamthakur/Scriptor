@@ -67,12 +67,14 @@ Requirements:
 - Image URLs: {', '.join(item['image'] for item in image_urls)}
 Image URLs with Credits: {', '.join(image_urls_with_credits)}
 - Write a conclusion section at the very end of the article.
+- End with a section named Sources and use sources provided in the input article.
 
 Styling Requirements:
 - Section headings: text-xl font-bold my-2
+- Images: proper margins between paragraphs and images with my-2 class
 - Images: my-2 class rounded-xl
-- Images: Centered around parent container with max-width: 100%
-- Images: After every image attach their credit too in light gray center, text-sm text-gray-300 mt-1 mb-2
+- Images: Centered around parent container with width: 100% of parent container
+- Images: After every image attach their credit too in light gray, center, text-sm text-gray-300 mt-1 mb-2, centered
 - Text: Regular body text with normal legible styling
 - Main container: container mx-auto px-4 max-w-3xl
 

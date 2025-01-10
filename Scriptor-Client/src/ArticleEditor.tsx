@@ -39,6 +39,27 @@ const ArticleEditor: React.FC = () => {
 
   const [articlHTML, setArticleHTML] = useState<{ html_output?: string }>({}); // Added type for article HTML
 
+  const [confirmPublish, setConfirmPublish] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Added state for error message
+
+  const publishToNexis = async () => {
+    if (confirmPublish === "CONFIRM") {
+      setErrorMessage(null); // Clear any previous error
+      try {
+        await axios.post("http://localhost:5000/publish-article", {
+          article: articlHTML.html_output,
+        });
+        console.log("Article published successfully");
+      } catch (error) {
+        console.error("Error publishing article:", error);
+      }
+    } else {
+      setErrorMessage("Please write 'CONFIRM' to publish."); // Set error message
+      console.error("Please confirm to publish");
+    }
+  };
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Added type for event
     const { name, value } = e.target;
@@ -197,7 +218,7 @@ const ArticleEditor: React.FC = () => {
                       {item.credit}
                     </div>
                     <button
-                      className="bg-red-500 text-white rounded-lg w-full h-8 p-1 flex items-center justify-center"
+                      className="bg-red-500 text-white rounded-lg w-full h-8 p-1 flex items-center justify-center space-x-2"
                       onClick={() => {
                         const updatedImages =
                           articlHTMLInputs.image_urls.filter(
@@ -275,12 +296,38 @@ const ArticleEditor: React.FC = () => {
             <LoaderCircle size={48} className="animate-spin mx-auto" />
           )}
           {!generateArticleHTMLLoading && articlHTML.html_output && (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: articlHTML.html_output!,
-              }}
-              className="animate-in transition-all"
-            />
+            <div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: articlHTML.html_output!,
+                }}
+                className="animate-in transition-all"
+              />
+            </div>
+          )}
+          {!generateArticleHTMLLoading && articlHTML.html_output && (
+            <div className="flex flex-col space-y-2">
+              <hr />
+              <Label className="text-xl font-semibold">Publish</Label>
+              <Input
+                placeholder="Write CONFIRM to publish"
+                value={confirmPublish}
+                onChange={(e) => {
+                  setConfirmPublish(e.target.value);
+                  setErrorMessage(null); // Clear error message on input change
+                }}
+              />
+              {errorMessage && (
+                <div className="text-red-500">{errorMessage}</div>
+              )}
+              <Button
+                className="w-full mt-4 hover:bg-green-800"
+                onClick={publishToNexis}
+              >
+                {" "}
+                Publish to NEXIS{" "}
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>
