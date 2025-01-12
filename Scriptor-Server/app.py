@@ -5,6 +5,28 @@ from groq_api import generate_article, generate_html
 app = Flask(__name__)
 CORS(app)
 
+main_article = """"""
+
+@app.route("/publish-article", methods=["POST"])
+def publish_article_endpoint():
+    """
+    Handles requests for publishing the article.
+    """
+    try:
+        # Parse JSON payload
+        data = request.get_json()
+        print("Publish Article Touched")
+
+        # Publish Article to Nexis
+
+        
+
+        return jsonify({"message": "Article published", "published_url": published_url}), 200
+
+    except Exception as e:
+        # Handle any unexpected errors
+        return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
+
 @app.route("/generate-article", methods=["POST"])
 def generate_article_endpoint():
     """
@@ -62,18 +84,22 @@ Objective: Generate a plagiarism-free article in HTML format with Tailwind CSS s
 
 Requirements:
 - Article sections: {number_of_sections} !!STRICT REQUIREMENT!!
+- Enclose each section in a section tag with a unique ID. 
+- User h2 tag for headings inside a section.
 - Words per section: {words_per_section}
 - Images: {len(image_urls)}
 - Image URLs: {', '.join(item['image'] for item in image_urls)}
-Image URLs with Credits: {', '.join(image_urls_with_credits)}
+- Image URLs with Credits: {', '.join(image_urls_with_credits)}
+- img tags should have class 'w-full mr-2 mt-2 mb-1 rounded-xl'
 - Write a conclusion section at the very end of the article.
 - End with a section named Sources and use sources provided in the input article.
+- For the HTML output, the entire section tags list should be enclosed in a div with a class of 'container'.
 
 Styling Requirements:
 - Section headings: text-xl font-bold my-2
 - Images: proper margins between paragraphs and images with my-2 class
 - Images: my-2 class rounded-xl
-- Images: Centered around parent container with width: 100% of parent container
+- Images: contains a class that makes it in the center of the parent tag always with mx-auto
 - Images: After every image attach their credit too in light gray, center, text-sm text-gray-300 mt-1 mb-2, centered
 - Text: Regular body text with normal legible styling
 - Main container: container mx-auto px-4 max-w-3xl
@@ -86,6 +112,8 @@ Input Article:
 
         # Generate HTML using Groq API
         html_output = generate_html(prompt)
+        main_article = html_output
+        print(main_article)
 
         return jsonify({"message": "HTML generated", "html_output": html_output}), 200
 

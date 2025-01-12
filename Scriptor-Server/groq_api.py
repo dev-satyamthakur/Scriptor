@@ -8,6 +8,28 @@ load_dotenv()
 # Initialize the Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+def generate_json(prompt):
+    """
+    Use the Groq client to generate a JSON object based on the provided prompt.
+    """
+    try:
+        # Call the Groq chat completion API for JSON generation
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                },
+            ],
+            model="llama-3.3-70b-versatile"  # Replace with the desired model
+        )
+
+        # Extract and return the generated content
+        return chat_completion.choices[0].message.content
+
+    except Exception as e:
+        raise Exception(f"Groq API Error: {e}")
+
 def generate_article(prompt):
     """
     Use the Groq client to generate an article based on the provided prompt.
