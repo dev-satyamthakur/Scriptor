@@ -1,11 +1,14 @@
+from turtle import title
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq_api import generate_article, generate_html
+import requests
 
 app = Flask(__name__)
 CORS(app)
 
 main_article = """"""
+
 
 @app.route("/publish-article", methods=["POST"])
 def publish_article_endpoint():
@@ -15,17 +18,36 @@ def publish_article_endpoint():
     try:
         # Parse JSON payload
         data = request.get_json()
-        print("Publish Article Touched")
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
 
-        # Publish Article to Nexis
+        url = "http://localhost:6969/test-conversion"
+        title = data.get("title")
+        thumbnail_url = data.get("thumbnail_url")
+        # Get HTML content from request
+        html_content = data.get("html_string", "")
 
-        
+        if not title or not thumbnail_url:
+            return jsonify({"error": "Missing required fields (title, thumbnail_url, or html_string)"}), 400
 
-        return jsonify({"message": "Article published", "published_url": published_url}), 200
+        # Publish article
+        response = requests.post(url, json={
+            "articleTitle": title,
+            "imageUrl": thumbnail_url,
+            "html_string": html_content
+        })
 
+        if response.status_code == 200:
+            return jsonify(response.json()), 200
+        else:
+            return jsonify({"error": f"Failed to publish article: {response.text}"}), response.status_code
+
+    except requests.RequestException as e:
+        return jsonify({"error": f"Network error: {str(e)}"}), 500
     except Exception as e:
         # Handle any unexpected errors
         return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
+
 
 @app.route("/generate-article", methods=["POST"])
 def generate_article_endpoint():
@@ -74,7 +96,8 @@ def generate_article_html_endpoint():
             return jsonify({"error": "Missing required input parameters"}), 400
 
         # Prepare image URLs and credits for the prompt
-        image_urls_with_credits = [f"{item['image']} (Credit: {item['credit']})" for item in image_urls]
+        image_urls_with_credits = [
+            f"{item['image']} (Credit: {item['credit']})" for item in image_urls]
 
         # Prompt for generating HTML
         prompt = f"""
