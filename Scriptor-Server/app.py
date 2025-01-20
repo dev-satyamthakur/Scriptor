@@ -21,7 +21,7 @@ def publish_article_endpoint():
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
 
-        url = "http://localhost:6969/test-conversion"
+        url = "http://localhost:6969/test-conversion" # this is nexis backend local endpoint
         title = data.get("title")
         thumbnail_url = data.get("thumbnail_url")
         # Get HTML content from request
@@ -31,11 +31,14 @@ def publish_article_endpoint():
             return jsonify({"error": "Missing required fields (title, thumbnail_url, or html_string)"}), 400
 
         # Publish article
+        headers = {
+            "x-access-key": "######"  # Add your access key here
+        }
         response = requests.post(url, json={
             "articleTitle": title,
             "imageUrl": thumbnail_url,
             "html_string": html_content
-        })
+        }, headers=headers)  
 
         if response.status_code == 200:
             return jsonify(response.json()), 200
