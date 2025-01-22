@@ -21,7 +21,7 @@ def publish_article_endpoint():
         if not data:
             return jsonify({"error": "No JSON data provided"}), 400
 
-        url = "http://localhost:6969/test-conversion" # this is nexis backend local endpoint
+        url = "http://localhost:6969/test-conversion"  # this is nexis backend local endpoint
         title = data.get("title")
         thumbnail_url = data.get("thumbnail_url")
         # Get HTML content from request
@@ -38,7 +38,7 @@ def publish_article_endpoint():
             "articleTitle": title,
             "imageUrl": thumbnail_url,
             "html_string": html_content
-        }, headers=headers)  
+        }, headers=headers)
 
         if response.status_code == 200:
             return jsonify(response.json()), 200
@@ -84,7 +84,7 @@ def generate_article_html_endpoint():
     """
     Handles requests for generating HTML from the article.
     Expects JSON payload with 'main_article', 'number_of_sections',
-    'words_per_section', and 'image_urls' keys.
+    'words_per_section', and optionally 'image_urls'.
     """
     try:
         # Parse JSON payload
@@ -92,15 +92,18 @@ def generate_article_html_endpoint():
         main_article = data.get("main_article")
         number_of_sections = data.get("number_of_sections")
         words_per_section = data.get("words_per_section")
-        image_urls = data.get("image_urls")
+        image_urls = data.get("image_urls", [])  # Optional field with default value
 
-        # Validate input
-        if not main_article or not number_of_sections or not words_per_section or not image_urls:
+        # Validate required input
+        if not main_article or not number_of_sections or not words_per_section:
             return jsonify({"error": "Missing required input parameters"}), 400
 
-        # Prepare image URLs and credits for the prompt
-        image_urls_with_credits = [
-            f"{item['image']} (Credit: {item['credit']})" for item in image_urls]
+        # Prepare image URLs and credits for the prompt (handle optional image_urls)
+        image_urls_with_credits = []
+        if image_urls:
+            image_urls_with_credits = [
+                f"{item['image']} (Credit: {item['credit']})" for item in image_urls
+            ]
 
         # Prompt for generating HTML
         prompt = f"""
@@ -111,7 +114,7 @@ Objective: Generate a plagiarism-free article in HTML format with Tailwind CSS s
 Requirements:
 - Article sections: {number_of_sections} !!STRICT REQUIREMENT!!
 - Enclose each section in a section tag with a unique ID. 
-- User h2 tag for headings inside a section.
+- Use h2 tag for headings inside a section.
 - Words per section: {words_per_section}
 - Images: {len(image_urls)}
 - Image URLs: {', '.join(item['image'] for item in image_urls)}
